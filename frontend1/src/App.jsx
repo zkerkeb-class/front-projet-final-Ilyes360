@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, Navigate } from 'react-router-dom';
 import './App.css';
 import CharacterList from './components/CharacterList';
 import Login from './components/Login';
@@ -38,9 +38,9 @@ function AppContent() {
         </nav>
       )}
       <Routes>
-        <Route index element={<CharacterList />} />
-        <Route path="characters" element={<CharacterList />} />
-        <Route path="characters/:id" element={<CharacterDetail isLoggedIn={isLoggedIn} />} />
+        <Route index element={isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />} />
+        <Route path="characters" element={isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />} />
+        <Route path="characters/:id" element={isLoggedIn ? <CharacterDetail isLoggedIn={isLoggedIn} /> : <Navigate to="/login" replace />} />
         <Route path="login" element={<Login />} />
       </Routes>
     </div>
