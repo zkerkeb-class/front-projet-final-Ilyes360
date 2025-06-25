@@ -154,6 +154,12 @@ const CharacterDetail = () => {
     fetchCharacter();
   }, [id]);
 
+  useEffect(() => {
+    if (character) {
+      document.title = character.fullName || character.name || 'Character Detail';
+    }
+  }, [character]);
+
   if (loading) return <div className="character-detail-card">Loading...</div>;
   if (error) return <div className="character-detail-card error">{error}</div>;
   if (!character) return null;
