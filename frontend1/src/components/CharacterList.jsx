@@ -85,6 +85,10 @@ const CharacterList = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [loadingMore]);
 
+  useEffect(() => {
+    document.title = 'Character Library';
+  }, []);
+
   const toggleFilter = (value, selected, setSelected) => {
     setSelected(selected.includes(value)
       ? selected.filter(v => v !== value)
