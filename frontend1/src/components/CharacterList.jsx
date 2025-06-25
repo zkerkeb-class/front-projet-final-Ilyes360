@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import CharacterCard from './CharacterCard';
 import './CharacterCard.css';
 import '../App.css';
@@ -106,7 +107,13 @@ const CharacterList = () => {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <div className="character-list-container">
+    <motion.div
+      className="character-list-container"
+      initial={{ opacity: 0, x: -40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 40 }}
+      transition={{ duration: 0.4 }}
+    >
       <div className="character-list-welcome" style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-accent)', marginBottom: 10 }}>
         Welcome to the library
       </div>
@@ -167,16 +174,27 @@ const CharacterList = () => {
         </div>
       </div>
       <div className="character-card-grid">
-        {filteredCharacters.slice(0, visibleCount).map(char => (
-          <CharacterCard key={char.id} character={char} />
-        ))}
+        <AnimatePresence mode="popLayout">
+          {filteredCharacters.slice(0, visibleCount).map(char => (
+            <motion.div
+              key={char.id}
+              initial={{ opacity: 0, scale: 0.85 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.85 }}
+              transition={{ duration: 0.25 }}
+              layout
+            >
+              <CharacterCard character={char} />
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
       {visibleCount < filteredCharacters.length && (
         <div style={{ textAlign: 'center', margin: '32px 0' }}>
           <div className="infinite-scroll-spinner" />
         </div>
       )}
-    </div>
+    </motion.div>
   );
 };
 

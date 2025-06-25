@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { motion } from "framer-motion";
 import './CharacterDetail.css';
 
 import physicalIcon from '../assets/icons/elements/physical.png';
@@ -9,6 +10,7 @@ import lightningIcon from '../assets/icons/elements/lightning.png';
 import windIcon from '../assets/icons/elements/wind.png';
 import quantumIcon from '../assets/icons/elements/quantum.png';
 import imaginaryIcon from '../assets/icons/elements/imaginary.png';
+import acheronPortrait from '../assets/icons/portraits/acheron.webp';
 
 import destructionIcon from '../assets/icons/paths/Icon_Destruction.webp';
 import huntIcon from '../assets/icons/paths/Icon_The_Hunt.webp';
@@ -38,6 +40,11 @@ const pathIcons = {
   Preservation: preservationIcon,
   Abundance: abundanceIcon,
   Remembrance: remembranceIcon,
+};
+
+const portraitMap = {
+  Acheron: acheronPortrait,
+  // Add more mappings as needed
 };
 
 const FIELD_LABELS = {
@@ -165,7 +172,23 @@ const CharacterDetail = () => {
   if (!character) return null;
 
   return (
-    <div className="character-detail-card">
+    <motion.div
+      className="character-detail-card portrait-bg-blur"
+      style={
+        portraitMap[character.name]
+          ? {
+              backgroundImage: `url(${portraitMap[character.name]})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+              position: 'relative',
+            }
+          : {}
+      }
+      initial={{ opacity: 0, x: 40 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -40 }}
+      transition={{ duration: 0.4 }}
+    >
       <div className="character-detail-header">
         <h2>{character.fullName || character.name}</h2>
         <div className="subtitle">
@@ -195,7 +218,7 @@ const CharacterDetail = () => {
       {renderAbility(character.talentname, character.talentdescription, 'Talent')}
       {renderAbility(character.techniquename, character.techniquedescription, 'Technique')}
       {renderAbility(character.ultname, character.ultdescription, 'Ultimate')}
-    </div>
+    </motion.div>
   );
 };
 

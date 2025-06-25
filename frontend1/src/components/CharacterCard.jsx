@@ -9,6 +9,7 @@ import lightningIcon from '../assets/icons/elements/lightning.png';
 import windIcon from '../assets/icons/elements/wind.png';
 import quantumIcon from '../assets/icons/elements/quantum.png';
 import imaginaryIcon from '../assets/icons/elements/imaginary.png';
+import { portraitMap } from '../assets/icons/portraits/portraits';
 
 import destructionIcon from '../assets/icons/paths/Icon_Destruction.webp';
 import huntIcon from '../assets/icons/paths/Icon_The_Hunt.webp';
@@ -44,6 +45,16 @@ const CharacterCard = ({ character }) => {
   const navigate = useNavigate();
   return (
     <div className="character-card" onClick={() => navigate(`/characters/${character.id}`)} tabIndex={0} role="button">
+      {portraitMap[character.name] && (
+        <div className="character-portrait-wrapper">
+          <img
+            src={portraitMap[character.name]}
+            alt={character.name}
+            className="character-portrait"
+            style={{ width: 100, height: 100, borderRadius: '50%', marginBottom: 8, objectFit: 'cover' }}
+          />
+        </div>
+      )}
       <div className="character-card-header">
         <strong className="character-card-name">{character.name}</strong>
         <strong className={`character-card-rarity rarity-${character.rarity}`}>{character.rarity}★</strong>

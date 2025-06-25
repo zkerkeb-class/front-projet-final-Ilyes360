@@ -34,7 +34,7 @@ function Login({ onLogin }) {
   };
 
   return (
-    <div className="login-container">
+    <div className="login-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
       <h2 className="login-heading">Login</h2>
       <form onSubmit={handleSubmit}>
         <div>

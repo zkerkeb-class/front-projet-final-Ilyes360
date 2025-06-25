@@ -6,6 +6,7 @@ import Login from './components/Login';
 import CharacterDetail, { BackToListButton } from './components/CharacterDetail';
 import { useTheme } from './theme';
 import logo from './assets/icons/logo.png';
+import { AnimatePresence, motion } from 'framer-motion';
 
 function AppContent() {
   const location = useLocation();
@@ -37,12 +38,66 @@ function AppContent() {
           </ul>
         </nav>
       )}
-      <Routes>
-        <Route index element={isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />} />
-        <Route path="characters" element={isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />} />
-        <Route path="characters/:id" element={isLoggedIn ? <CharacterDetail isLoggedIn={isLoggedIn} /> : <Navigate to="/login" replace />} />
-        <Route path="login" element={<Login />} />
-      </Routes>
+      <AnimatePresence mode="wait">
+        <Routes location={location} key={location.pathname}>
+          <Route 
+            index 
+            element={
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+                style={{ height: '100%' }}
+              >
+                {isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />}
+              </motion.div>
+            }
+          />
+          <Route 
+            path="characters" 
+            element={
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+                style={{ height: '100%' }}
+              >
+                {isLoggedIn ? <CharacterList /> : <Navigate to="/login" replace />}
+              </motion.div>
+            }
+          />
+          <Route 
+            path="characters/:id" 
+            element={
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+                style={{ height: '100%' }}
+              >
+                {isLoggedIn ? <CharacterDetail isLoggedIn={isLoggedIn} /> : <Navigate to="/login" replace />}
+              </motion.div>
+            }
+          />
+          <Route 
+            path="login" 
+            element={
+              <motion.div
+                initial={{ opacity: 0, x: 40 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -40 }}
+                transition={{ duration: 0.3 }}
+                style={{ height: '100%' }}
+              >
+                <Login />
+              </motion.div>
+            }
+          />
+        </Routes>
+      </AnimatePresence>
     </div>
   );
 }
