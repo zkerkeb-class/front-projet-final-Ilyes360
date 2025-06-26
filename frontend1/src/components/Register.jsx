@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-function Login({ onLogin }) {
+function Register() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [shouldRenderErrorPopup, setShouldRenderErrorPopup] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = 'Login';
+    document.title = 'Register';
   }, []);
 
   useEffect(() => {
@@ -21,30 +22,32 @@ function Login({ onLogin }) {
       const hideTimeout = setTimeout(() => setShowErrorPopup(false), 1000);
       const removeTimeout = setTimeout(() => setShouldRenderErrorPopup(false), 1350);
       return () => { clearTimeout(hideTimeout); clearTimeout(removeTimeout); };
+      const timer = setTimeout(() => setShowErrorPopup(false), 1000);
+      return () => clearTimeout(timer);
     }
   }, [error]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess(false);
     setShowPopup(false);
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', {
+      const res = await fetch('http://localhost:3000/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })
       });
       const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem('token', data.token);
-        if (onLogin) onLogin(data.token);
+      if (res.ok) {
+        setSuccess(true);
         setShowPopup(true);
         setTimeout(() => {
           setShowPopup(false);
-          navigate('/');
-        }, 1500);
+          navigate('/login');
+        }, 1800);
       } else {
-        setError(data.message || 'Login failed');
+        setError(data.message || 'Registration failed');
       }
     } catch (err) {
       setError('Network error');
@@ -55,7 +58,7 @@ function Login({ onLogin }) {
 
   return (
     <div className="login-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-      <h2 className="login-heading">Login</h2>
+      <h2 className="login-heading">Register</h2>
       <form onSubmit={handleSubmit}>
         <div>
           <label>Username: </label>
@@ -65,28 +68,28 @@ function Login({ onLogin }) {
           <label>Password: </label>
           <input type="password" value={password} onChange={e => setPassword(e.target.value)} required />
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Register</button>
       </form>
       {shouldRenderErrorPopup && error && (
         <div className={errorPopupClass} style={{ background: '#ef4444' }}>
           <div className="checkmark" style={{ color: '#fff', fontSize: '3.2rem' }}>❌</div>
-          <div className="popup-title">Login Failed</div>
-          <div className="popup-message">{error}</div>
+          <div className="popup-title">Registration Failed</div>
+          <div className="popup-message">
+            {error.toLowerCase().includes('exist')
+              ? 'An account with this username already exists. Please choose a different username.'
+              : error}
+          </div>
         </div>
       )}
       {showPopup && (
         <div className={`success-popup${!showPopup ? ' hide' : ''}`}>
           <div className="checkmark" style={{ color: '#4ade80', fontSize: '3.2rem' }}>✅</div>
-          <div className="popup-title">Login Successful!</div>
-          <div className="popup-message">Welcome back!</div>
+          <div className="popup-title">Registration Successful!</div>
+          <div className="popup-message">You can now log in with your new account.</div>
         </div>
       )}
-      <div style={{ marginTop: 16, textAlign: 'center' }}>
-        <span>Don't have an account? </span>
-        <Link to="/register">Register here</Link>
-      </div>
     </div>
   );
 }
 
-export default Login; 
+export default Register; 

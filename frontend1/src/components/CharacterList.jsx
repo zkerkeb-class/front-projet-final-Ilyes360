@@ -115,7 +115,7 @@ const CharacterList = () => {
       transition={{ duration: 0.4 }}
     >
       <div className="character-list-welcome" style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-accent)', marginBottom: 10 }}>
-        Welcome to the library
+        Welcome to the library!
       </div>
       <h2 className="character-list-heading">Characters</h2>
       {/* Filter Buttons */}
@@ -175,7 +175,7 @@ const CharacterList = () => {
       </div>
       <div className="character-card-grid">
         <AnimatePresence mode="popLayout">
-          {filteredCharacters.slice(0, visibleCount).map(char => (
+        {filteredCharacters.slice(0, visibleCount).map(char => (
             <motion.div
               key={char.id}
               initial={{ opacity: 0, scale: 0.85 }}
@@ -186,7 +186,7 @@ const CharacterList = () => {
             >
               <CharacterCard character={char} />
             </motion.div>
-          ))}
+        ))}
         </AnimatePresence>
       </div>
       {visibleCount < filteredCharacters.length && (

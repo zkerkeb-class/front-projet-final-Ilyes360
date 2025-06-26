@@ -16,6 +16,10 @@
   text-align: center;
 }
 
+body:not(.dark-theme) .character-card {
+  background: #b3d1ff;
+}
+
 .character-card:hover, .character-card:focus {
   box-shadow: 0 4px 24px var(--text-accent), 0 1.5px 8px rgba(0,0,0,0.10);
   border: 2px solid var(--text-accent);

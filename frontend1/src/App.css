@@ -479,3 +479,61 @@ form input:-webkit-autofill:active {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Animated popup window for success messages */
+.success-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  z-index: 9999;
+  background: #4f8cff;
+  color: #fff;
+  backdrop-filter: blur(8px) saturate(1.2);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(79,140,255,0.18), 0 1.5px 8px rgba(0,0,0,0.10);
+  padding: 38px 48px 32px 48px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: popupIn 0.45s cubic-bezier(.6,-0.28,.74,.05);
+}
+.success-popup.hide {
+  animation: popupOut 0.35s cubic-bezier(.6,-0.28,.74,.05) forwards;
+}
+.success-popup .checkmark {
+  font-size: 3.2rem;
+  color: #4f8cff;
+  margin-bottom: 12px;
+  animation: checkPop 0.5s cubic-bezier(.6,-0.28,.74,.05);
+}
+.success-popup .popup-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-accent);
+  margin-bottom: 8px;
+  text-align: center;
+}
+.success-popup .popup-message {
+  font-size: 1.08rem;
+  color: var(--text-main);
+  text-align: center;
+}
+.success-popup .popup-title, .success-popup .popup-message {
+  color: #fff;
+  text-shadow: 0 2px 8px #2563eb88, 0 1px 2px #0006;
+}
+@keyframes popupIn {
+  from { opacity: 0; transform: translate(-50%, -60%) scale(0.92); }
+  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes popupOut {
+  from { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+  to { opacity: 0; transform: translate(-50%, -60%) scale(0.92); }
+}
+@keyframes checkPop {
+  0% { transform: scale(0.7); opacity: 0; }
+  60% { transform: scale(1.2); opacity: 1; }
+  100% { transform: scale(1); opacity: 1; }
+}
