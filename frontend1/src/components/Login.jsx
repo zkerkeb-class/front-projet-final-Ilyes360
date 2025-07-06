@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from '../theme';
 
 function Login({ onLogin }) {
   const [username, setUsername] = useState('');
@@ -9,6 +10,7 @@ function Login({ onLogin }) {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [shouldRenderErrorPopup, setShouldRenderErrorPopup] = useState(false);
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useTheme();
 
   useEffect(() => {
     document.title = 'Login';
@@ -55,6 +57,16 @@ function Login({ onLogin }) {
 
   return (
     <div className="login-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <nav>
+        <ul>
+          <li>
+            <button onClick={() => setDarkMode(dm => !dm)} style={{marginRight: 8}}>
+              {darkMode ? '🌙 Dark' : '☀️ Light'}
+            </button>
+          </li>
+          <li><Link to="/register">Register</Link></li>
+        </ul>
+      </nav>
       <h2 className="login-heading">Login</h2>
       <form onSubmit={handleSubmit}>
         <div>

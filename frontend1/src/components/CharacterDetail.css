@@ -103,6 +103,23 @@
   text-align: center;
   text-shadow: none;
   background: none;
+  max-height: 320px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--text-accent) var(--bg-accent);
+}
+
+/* Optional: Custom scrollbar for Webkit browsers */
+.character-detail-description::-webkit-scrollbar {
+  width: 8px;
+}
+.character-detail-description::-webkit-scrollbar-thumb {
+  background: var(--text-accent);
+  border-radius: 6px;
+}
+.character-detail-description::-webkit-scrollbar-track {
+  background: var(--bg-accent);
+  border-radius: 6px;
 }
 
 .character-detail-card ul {
@@ -371,7 +388,7 @@
   max-width: 400px;
   flex: 0 0 340px;
   margin-right: 0;
-  margin-left: -32px;
+  margin-left: 8px;
 }
 .character-splashart-img {
   width: 100%;
@@ -443,4 +460,15 @@
   letter-spacing: 1px;
   background: none;
   text-shadow: none;
+}
+
+.highlight-number {
+  color: var(--text-accent);
+  font-weight: 700;
+  background: rgba(79,140,255,0.10);
+  border-radius: 4px;
+  padding: 0 4px;
+  margin: 0 1px;
+  box-shadow: 0 1px 4px rgba(79,140,255,0.07);
+  transition: color 0.3s, background 0.3s;
 } 

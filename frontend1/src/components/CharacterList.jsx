@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import CharacterCard from './CharacterCard';
 import './CharacterCard.css';
 import '../App.css';
+import { authFetch } from '../utils/authFetch';
+import { useTranslation } from 'react-i18next';
 
 // Import icons for filters
 import physicalIcon from '../assets/icons/elements/physical.png';
@@ -46,6 +48,7 @@ const pathIcons = {
 const rarities = [5, 4];
 
 const CharacterList = () => {
+  const { t } = useTranslation();
   const [characters, setCharacters] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedElements, setSelectedElements] = useState([]);
@@ -53,9 +56,13 @@ const CharacterList = () => {
   const [selectedRarities, setSelectedRarities] = useState([]);
   const [visibleCount, setVisibleCount] = useState(6);
   const [loadingMore, setLoadingMore] = useState(false);
+  const [showBackToTop, setShowBackToTop] = useState(false);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/characters/getCharacters')
+    authFetch('http://localhost:3000/api/characters/getCharacters', {}, () => {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    })
       .then(res => res.json())
       .then(data => {
         setCharacters(data);
@@ -81,6 +88,9 @@ const CharacterList = () => {
           setLoadingMore(false);
         }, 500);
       }
+      
+      // Show/hide back to top button
+      setShowBackToTop(scrollY > 300);
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
@@ -95,6 +105,13 @@ const CharacterList = () => {
       ? selected.filter(v => v !== value)
       : [...selected, value]
     );
+  };
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   };
 
   const filteredCharacters = characters.filter(char => {
@@ -117,7 +134,7 @@ const CharacterList = () => {
       <div className="character-list-welcome" style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-accent)', marginBottom: 10 }}>
         Welcome to the library!
       </div>
-      <h2 className="character-list-heading">Characters</h2>
+      <h2 className="character-list-heading">{t('characters')}</h2>
       {/* Filter Buttons */}
       <div style={{ marginBottom: 24 }}>
         <button
@@ -129,10 +146,10 @@ const CharacterList = () => {
           className="filter-btn filter-reset-btn"
           style={{ marginBottom: 12, marginRight: 12 }}
         >
-          Reset Filters
+          {t('reset_filters')}
         </button>
         <div style={{ marginBottom: 8 }}>
-          <strong>Element: </strong>
+          <strong>{t('element')}: </strong>
           {Object.entries(elementIcons).map(([element, icon]) => (
             <button
               key={element}
@@ -146,7 +163,7 @@ const CharacterList = () => {
           ))}
         </div>
         <div style={{ marginBottom: 8 }}>
-          <strong>Path: </strong>
+          <strong>{t('path')}: </strong>
           {Object.entries(pathIcons).map(([path, icon]) => (
             <button
               key={path}
@@ -160,7 +177,7 @@ const CharacterList = () => {
           ))}
         </div>
         <div style={{ marginBottom: 8 }}>
-          <strong>Rarity: </strong>
+          <strong>{t('rarity')}: </strong>
           {rarities.map(rarity => (
             <button
               key={rarity}
@@ -194,6 +211,25 @@ const CharacterList = () => {
           <div className="infinite-scroll-spinner" />
         </div>
       )}
+      
+      {/* Back to Top Button */}
+      <AnimatePresence>
+        {showBackToTop && (
+          <motion.button
+            className="back-to-top-btn"
+            onClick={scrollToTop}
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.3 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <span className="arrow-icon">↑</span>
+            <span>{t('top')}</span>
+          </motion.button>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 };

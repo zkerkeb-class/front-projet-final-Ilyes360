@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion } from "framer-motion";
 import './CharacterDetail.css';
+import { useTranslation } from 'react-i18next';
 
 import physicalIcon from '../assets/icons/elements/physical.png';
 import fireIcon from '../assets/icons/elements/fire.png';
@@ -10,7 +11,6 @@ import lightningIcon from '../assets/icons/elements/lightning.png';
 import windIcon from '../assets/icons/elements/wind.png';
 import quantumIcon from '../assets/icons/elements/quantum.png';
 import imaginaryIcon from '../assets/icons/elements/imaginary.png';
-import acheronPortrait from '../assets/icons/portraits/acheron.webp';
 
 import destructionIcon from '../assets/icons/paths/Icon_Destruction.webp';
 import huntIcon from '../assets/icons/paths/Icon_The_Hunt.webp';
@@ -21,6 +21,7 @@ import preservationIcon from '../assets/icons/paths/Icon_Preservation.webp';
 import abundanceIcon from '../assets/icons/paths/Icon_Abundance.webp';
 import remembranceIcon from '../assets/icons/paths/Icon_Remembrance.webp';
 import { splashartMap } from '../assets/icons/splashart/Splashart';
+import { authFetch } from '../utils/authFetch';
 
 const elementIcons = {
   Physical: physicalIcon,
@@ -43,71 +44,53 @@ const pathIcons = {
   Remembrance: remembranceIcon,
 };
 
-const portraitMap = {
-  Acheron: acheronPortrait,
-  // Add more mappings as needed
-};
-
 const FIELD_LABELS = {
-  name: 'Name',
-  fullName: 'Full Name',
-  element: 'Element',
-  path: 'Path',
-  rarity: 'Rarity',
-  spNeed: 'Max Energy',
-  description: 'Description',
-  speed: 'Speed',
-  taunt: 'Taunt',
-  basehp: 'Base HP',
-  baseatk: 'Base ATK',
-  basedef: 'Base DEF',
-  basicatkdescription: 'Basic Attack Description',
-  basicatkname: 'Basic Attack Name',
-  skilldescription: 'Skill Description',
-  skillname: 'Skill Name',
-  talentdescription: 'Talent Description',
-  talentname: 'Talent Name',
-  techniquedescription: 'Technique Description',
-  techniquename: 'Technique Name',
-  ultdescription: 'Ultimate Description',
-  ultname: 'Ultimate Name',
+  name: 'name',
+  fullName: 'full_name',
+  element: 'element',
+  path: 'path',
+  rarity: 'rarity',
+  spNeed: 'max_energy',
+  description: 'description',
+  speed: 'speed',
+  taunt: 'taunt',
+  basehp: 'base_hp',
+  baseatk: 'base_atk',
+  basedef: 'base_def',
+  basicatkdescription: 'basic_attack_description',
+  basicatkname: 'basic_attack_name',
+  skilldescription: 'skill_description',
+  skillname: 'skill_name',
+  talentdescription: 'talent_description',
+  talentname: 'talent_name',
+  techniquedescription: 'technique_description',
+  techniquename: 'technique_name',
+  ultdescription: 'ultimate_description',
+  ultname: 'ultimate_name',
 };
-
-const FIELD_ORDER = [
-  'name', 'fullName', 'element', 'path', 'rarity', 'spNeed', 'description',
-  'speed', 'taunt', 'basehp', 'baseatk', 'basedef',
-  'basicatkname', 'basicatkdescription',
-  'skillname', 'skilldescription',
-  'talentname', 'talentdescription',
-  'techniquename', 'techniquedescription',
-  'ultname', 'ultdescription',
-];
 
 const STAT_FIELDS = ['rarity', 'element', 'path', 'speed', 'taunt', 'basehp', 'baseatk', 'basedef', 'spNeed'];
 const DESCRIPTION_FIELDS = ['description'];
-const ABILITY_FIELDS = [
-  ['basicatkname', 'basicatkdescription'],
-  ['skillname', 'skilldescription'],
-  ['talentname', 'talentdescription'],
-  ['techniquename', 'techniquedescription'],
-  ['ultname', 'ultdescription'],
-];
-
-const ABILITY_LABELS = {
-  basicatkname: 'Basic Attack',
-  skillname: 'Skill',
-  ultname: 'Ultimate',
-  techniquename: 'Technique',
-  talentname: 'Talent',
-};
 
 export function BackToListButton() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { t } = useTranslation();
+  
+  // Get the previous location from state, or default to characters list
+  const previousPath = location.state?.from || '/characters';
+  const previousLabel = location.state?.fromLabel || t('character_list');
+  
   return (
-    <button className="back-to-list" onClick={() => navigate('/characters')}>
-      &larr; Back to List
+    <button className="back-to-list" onClick={() => navigate(previousPath)}>
+      &larr; {t('back_to')} {previousLabel}
     </button>
   );
+}
+
+function highlightNumbers(text) {
+  // Match numbers, decimals, and percentages (e.g., 100, 12.5, 50%)
+  return text.replace(/(\b\d+(?:\.\d+)?%?\b)/g, '<span class="highlight-number">$1</span>');
 }
 
 function renderParagraphs(text) {
@@ -115,7 +98,8 @@ function renderParagraphs(text) {
   // Split on a dot followed by a space or end of string, keep the dot
   const sentences = text.match(/[^.]+\.(?:\s|$)/g) || [text];
   return sentences.map((sentence, idx) => (
-    <p key={idx} style={{ margin: '0 0 1em 0' }}>{sentence.trim()}</p>
+    <p key={idx} style={{ margin: '0 0 1em 0' }}
+      dangerouslySetInnerHTML={{ __html: highlightNumbers(sentence.trim()) }} />
   ));
 }
 
@@ -142,6 +126,7 @@ function renderAbility(name, desc, label) {
 
 const CharacterDetail = () => {
   const { id } = useParams();
+  const { t } = useTranslation();
   const [character, setCharacter] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -150,7 +135,10 @@ const CharacterDetail = () => {
   useEffect(() => {
     const fetchCharacter = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/characters/${id}`);
+        const res = await authFetch(`http://localhost:3000/api/characters/${id}`, {}, () => {
+          localStorage.removeItem('token');
+          window.location.href = '/login';
+        });
         if (!res.ok) throw new Error('Character not found');
         const data = await res.json();
         setCharacter(data);
@@ -165,9 +153,9 @@ const CharacterDetail = () => {
 
   useEffect(() => {
     if (character) {
-      document.title = character.fullName || character.name || 'Character Detail';
+      document.title = character.fullName || character.name || t('character_detail');
     }
-  }, [character]);
+  }, [character, t]);
 
   // Close splash modal on ESC
   useEffect(() => {
@@ -179,7 +167,7 @@ const CharacterDetail = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [showSplashModal]);
 
-  if (loading) return <div className="character-detail-card">Loading...</div>;
+  if (loading) return <div className="character-detail-card">{t('loading')}</div>;
   if (error) return <div className="character-detail-card error">{error}</div>;
   if (!character) return null;
 
@@ -210,30 +198,30 @@ const CharacterDetail = () => {
             <div className="subtitle">
               {elementIcons[character.element] && <img src={elementIcons[character.element]} alt={character.element} className="character-icon" />} <span className="blue-label">{character.element}</span> |
               {pathIcons[character.path] && <img src={pathIcons[character.path]} alt={character.path} className="character-icon" />} <span className="blue-label">{character.path}</span> |
-              <span className="blue-label">Rarity:</span> <span className={`rarity-${character.rarity}`}>{character.rarity}★</span>
+              <span className="blue-label">{t('rarity')}:</span> <span className={`rarity-${character.rarity}`}>{character.rarity}★</span>
             </div>
           </div>
           <div className="character-detail-section">
-            <h3>Stats</h3>
+            <div className="description-label">{t('stats')}</div>
             <div className="character-detail-stats">
               {STAT_FIELDS.filter(key => character[key] !== undefined && character[key] !== '' && key !== 'rarity' && key !== 'element' && key !== 'path').map(key => (
                 <div className="character-detail-stat" key={key}>
-                  <strong>{FIELD_LABELS[key] || key}:</strong> {character[key]}
+                  <strong>{t(FIELD_LABELS[key] || key)}:</strong> {character[key]}
                 </div>
               ))}
             </div>
           </div>
           {DESCRIPTION_FIELDS.map(key => character[key] && (
             <div className="character-detail-section" key={key}>
-              <div className="description-label">Description</div>
+              <div className="description-label">{t('description')}</div>
               <div className="character-detail-description">{renderParagraphs(character[key])}</div>
             </div>
           ))}
-          {renderAbility(character.basicatkname, character.basicatkdescription, 'Basic Attack')}
-          {renderAbility(character.skillname, character.skilldescription, 'Skill')}
-          {renderAbility(character.talentname, character.talentdescription, 'Talent')}
-          {renderAbility(character.techniquename, character.techniquedescription, 'Technique')}
-          {renderAbility(character.ultname, character.ultdescription, 'Ultimate')}
+          {renderAbility(character.basicatkname, character.basicatkdescription, t('basic_attack'))}
+          {renderAbility(character.skillname, character.skilldescription, t('skill'))}
+          {renderAbility(character.talentname, character.talentdescription, t('talent'))}
+          {renderAbility(character.techniquename, character.techniquedescription, t('technique'))}
+          {renderAbility(character.ultname, character.ultdescription, t('ultimate'))}
         </div>
       </motion.div>
       {showSplashModal && splashartMap[character.name] && (

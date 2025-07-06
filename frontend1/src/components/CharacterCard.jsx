@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './CharacterCard.css';
 
 import physicalIcon from '../assets/icons/elements/physical.png';
@@ -43,8 +43,34 @@ const pathIcons = {
 
 const CharacterCard = ({ character }) => {
   const navigate = useNavigate();
+  const location = useLocation();
+  
+  const getPageLabel = (pathname) => {
+    switch (pathname) {
+      case '/collection':
+        return 'Collection';
+      case '/wishlist':
+        return 'Wishlist';
+      case '/characters':
+        return 'Character List';
+      case '/':
+        return 'Dashboard';
+      default:
+        return 'Character List';
+    }
+  };
+  
+  const handleClick = () => {
+    navigate(`/characters/${character.id}`, {
+      state: {
+        from: location.pathname,
+        fromLabel: getPageLabel(location.pathname)
+      }
+    });
+  };
+  
   return (
-    <div className="character-card" onClick={() => navigate(`/characters/${character.id}`)} tabIndex={0} role="button">
+    <div className="character-card" onClick={handleClick} tabIndex={0} role="button">
       {portraitMap[character.name] && (
         <div className="character-portrait-wrapper">
           <img

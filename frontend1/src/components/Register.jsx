@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
+import { useTheme } from '../theme';
 
 function Register() {
   const [username, setUsername] = useState('');
@@ -10,6 +11,7 @@ function Register() {
   const [showErrorPopup, setShowErrorPopup] = useState(false);
   const [shouldRenderErrorPopup, setShouldRenderErrorPopup] = useState(false);
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useTheme();
 
   useEffect(() => {
     document.title = 'Register';
@@ -58,8 +60,31 @@ function Register() {
 
   return (
     <div className="login-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+      <nav>
+        <ul>
+          <li>
+            <button onClick={() => setDarkMode(dm => !dm)} style={{marginRight: 8}}>
+              {darkMode ? '🌙 Dark' : '☀️ Light'}
+            </button>
+          </li>
+          <li><Link to="/login">Login</Link></li>
+        </ul>
+      </nav>
       <h2 className="login-heading">Register</h2>
       <form onSubmit={handleSubmit}>
+        <div style={{
+          background: 'var(--bg-accent)',
+          color: 'var(--text-main)',
+          borderRadius: '10px',
+          padding: '14px 18px',
+          marginBottom: '18px',
+          fontSize: '1.08rem',
+          fontWeight: 500,
+          textAlign: 'center',
+          boxShadow: '0 1px 4px rgba(79,140,255,0.07)'
+        }}>
+          Create a new account to access the character library. Your username must be unique.
+        </div>
         <div>
           <label>Username: </label>
           <input value={username} onChange={e => setUsername(e.target.value)} required />
@@ -75,8 +100,8 @@ function Register() {
           <div className="checkmark" style={{ color: '#fff', fontSize: '3.2rem' }}>❌</div>
           <div className="popup-title">Registration Failed</div>
           <div className="popup-message">
-            {error.toLowerCase().includes('exist')
-              ? 'An account with this username already exists. Please choose a different username.'
+            {error.toLowerCase().includes('already taken') || error.toLowerCase().includes('exist')
+              ? 'Username already taken. Please choose a different username.'
               : error}
           </div>
         </div>
