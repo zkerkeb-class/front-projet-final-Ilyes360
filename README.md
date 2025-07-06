@@ -1,20 +1,12 @@
 Youssoufa Ilyes
 
+Projet final : Glossaire HSR
 
-Projet Final : Glossaire Honkai Star Rail
+Fonctionnalités : Répértoire des personnages de la franchise Honkai Star Rail, avec une liste ainsi qu'un accès aux détails de chaque personnages: - Ajout de pages de collection et de Wishlist personnalisées par users (Pour regarder ce qu'ils ont déja et planifier ce qu'ils veulent dans le futur) suivant toutes les deux le système CRUD. - Un système d'authentification (login et register) permettant aux users d'accéder à leurs répertoire personnels et éviter toute modification involontaire de ce dernier (sécurisé par JWT). - Un système de changement de thème (toggle) ainsi que de traduction (EN/FR) sur les pages.
 
+Plus : - Des animations implémentés sur l'entièreté du projet pour assurer une expérience utilisateur fluide et garder une certaine ergonomie du site. - Des Stats calculators pour les Wishlists et Collections des Users pour leur permettre d'évaluer leurs besoin actuels et futurs ainsi que leur progression en ce qui concerne leur personnages.
 
-Fonctionnalités: Il s'agit d'une application web qui consiste à:
-                     - Lister les personnages jouables dans le jeu Honkai Star rail, avec option de tri et filtre par élément, classe et rareté et une pagination via scroll infini
-                     - Accès  à leur détails concernant leur kit ainsi que leur artwork
-                     - Accès à un système de listes CRUD de collection et de wishlist personalisées par utilisateurs, les aidant à se retrouver dans leur progression et à  planifier dans le futur.
-                     - Un système d'authentification (connexion et inscription) des utilisateurs pour accèder à leur espaces, protégés par JWT.
-                     - Un système de changement de thème global (toggle) et de traduction (en/fr) des pages
-
-Le petit plus : L'appli est recouverte d'animations dans le but de rendre l'expérience utilisateur fluide et donner une certaine ergonomie.
-
-
-Des vidéos de démo faisant le tour du guide seront ajoutées en lien google drive ci - dessous :
+Une démo du site sera ajoutée sur le dossier front faisant le tour du site et de ses fonctionnalités.
 
 
 https://drive.google.com/file/d/143XQnonrPgVKBvoCY9XX105Ikn6oYCYI/view?usp=drive_link (partie 1)
